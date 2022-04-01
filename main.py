@@ -1,7 +1,7 @@
 from threading import currentThread
 from tkinter import *
-
 from numpy import full
+import time
 
 root=Tk()
 root.title("MyCalc")
@@ -15,12 +15,22 @@ entry_field.grid(row=0, column=0, columnspan=3, padx=10, pady=10)
 resFl = BooleanVar()
 current_num = StringVar()
 full_operation = StringVar()
+clr_type = StringVar()
+clr_type = "C"
 full_operation = ""
+
+def change_btnClr_width():
+    if btnClr["text"] == "CE":
+        btnClr.config(padx=37)
+    if btnClr["text"] == "C":
+        btnClr.config(padx=40)
 
 def button_press(num):
     global curent_num
     global resFl
     global full_operation
+    global clr_type
+    global btnClr
     if resFl == True:
         entry_field.delete(0, END)
         full_operation = ""
@@ -30,44 +40,77 @@ def button_press(num):
     current_num = entry_field.get()
     entry_field.delete(0, END)
     entry_field.insert(0, str(current_num) + str(num))
+    clr_type = "C"
+    btnClr.config(text="C")
+    change_btnClr_width()
+
     return
 
 def op_button_press(sgn):
     global full_operation
     global current_num
     global resFl
-    if resFl == True:
+    try:
+        int(entry_field.get())
+        if resFl == True:
+            entry_field.delete(0, END)
+            resFl = False
+        else:
+            pass
+        current_num = entry_field.get()
+        full_operation += current_num + sgn
         entry_field.delete(0, END)
+        l=Label(root, text=full_operation).grid(row=7,column=0)
+    except:
+        err = "Error! (Var)"
+        entry_field.delete(0, END)
+        entry_field.insert(0, "Error! (Var)")
+        entry_field.after(1000, clr_button_press)
+
+def clr_button_press():
+    global resFl
+    global full_operation
+    global clr_type
+    if clr_type =="CE":
+        entry_field.delete(0, END)
+        full_operation = ""
         resFl = False
     else:
-        pass
-    current_num = entry_field.get()
-    full_operation += current_num + sgn
-    entry_field.delete(0, END)
-    l=Label(root, text=full_operation).grid(row=7,column=0)
+        entry_field.delete(0, END)
+        clr_type = "CE"
+        btnClr.config(text="CE")
+        change_btnClr_width()
+    return
 
 def sum_button_press():
     global full_operation
     global current_num
     global resFl
-    if resFl == True:
+    global clr_type
+    try:
+        int(entry_field.get())
+        if resFl == True:
+            entry_field.delete(0, END)
+            entry_field.insert(0, str(full_operation))
+        else:
+            resFl = True
+            current_num = entry_field.get()
+            full_operation += current_num
+            full_operation = str(eval(full_operation))
+            entry_field.delete(0, END)
+            entry_field.insert(0, str(full_operation))
+            l=Label(root, text=full_operation).grid(row=7,column=0)
+    except:
+        err = "Error! (Var)"
         entry_field.delete(0, END)
-        entry_field.insert(0, str(full_operation))
-    else:
-        resFl = True
-        current_num = entry_field.get()
-        full_operation += current_num
-        full_operation = str(eval(full_operation))
-        entry_field.delete(0, END)
-        entry_field.insert(0, str(full_operation))
-        l=Label(root, text=full_operation).grid(row=7,column=0)
+        entry_field.insert(0, "Error! (Var)")
+        entry_field.after(1000, clr_button_press)
+    clr_type="CE"
+    btnClr.config(text="CE")
+    change_btnClr_width()
     return
 
-def clr_button_press():
-    global full_operation
-    entry_field.delete(0, END)
-    full_operation = ""
-    return
+
 
 # Creating buttons
 btn1 = Button(root, text="1", padx=40, pady=20, border=2, command=lambda: button_press(1))
@@ -90,8 +133,9 @@ btnDiv = Button(root, text="*", padx=40, pady=20, border=2, command=lambda: op_b
 btnMult = Button(root, text="/", padx=40, pady=20, border=2, command=lambda: op_button_press("/"))
 
 btnEq = Button(root, text="=", padx=40, pady=20, border=2, command=lambda: sum_button_press())
-btnClr = Button(root, text="CE", padx=37, pady=20, border=2, command=lambda: clr_button_press())
 
+btnClr = Button(root, text="CE", padx=37, pady=20, border=2, command=lambda: clr_button_press())
+    
 # Showing buttons
 btn1.grid(row=3, column=0, padx=3, pady=3)
 btn2.grid(row=3, column=1, padx=3, pady=3)
