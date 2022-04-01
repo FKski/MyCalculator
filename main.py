@@ -60,7 +60,6 @@ def op_button_press(sgn):
         current_num = entry_field.get()
         full_operation += current_num + sgn
         entry_field.delete(0, END)
-        l=Label(root, text=full_operation).grid(row=7,column=0)
     except:
         err = "Error! (Var)"
         entry_field.delete(0, END)
@@ -99,7 +98,6 @@ def sum_button_press():
             full_operation = str(eval(full_operation))
             entry_field.delete(0, END)
             entry_field.insert(0, str(full_operation))
-            l=Label(root, text=full_operation).grid(row=7,column=0)
     except:
         err = "Error! (Var)"
         entry_field.delete(0, END)
