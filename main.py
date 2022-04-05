@@ -18,7 +18,8 @@ full_operation = StringVar()
 full_operation = ""
 clr_type = StringVar()
 clr_type = "C"
-
+sgnFl = BooleanVar()
+sgnFl = False
 
 def change_btnClr_width():
     if btnClr["text"] == "CE":
@@ -32,6 +33,7 @@ def button_press(num):
     global full_operation
     global clr_type
     global btnClr
+    global sgnFl
     if resFl == True:
         full_operation_label.config(text="")
         entry_field.delete(0, END)
@@ -46,21 +48,32 @@ def button_press(num):
     btnClr.config(text="C")
     full_operation_label.config(text=full_operation)
     change_btnClr_width()
+    sgnFl = False
     return
 
 def op_button_press(sgn):
     global full_operation
     global current_num
     global resFl
+    global sgnFl
+
     if resFl == True:
         entry_field.delete(0, END)
         resFl = False
     else:
         pass
-    current_num = entry_field.get()
-    full_operation += current_num + sgn
-    entry_field.delete(0, END)
-    full_operation_label.config(text=full_operation)
+    if sgnFl == False:
+        current_num = entry_field.get()
+        full_operation += current_num + sgn
+        entry_field.delete(0, END)
+        full_operation_label.config(text=full_operation)
+        sgnFl = True
+    else:
+        full_operation = full_operation[:-1]
+        full_operation += sgn
+        entry_field.delete(0, END)
+        full_operation_label.config(text=full_operation)
+
 
 def clr_button_press():
     global resFl
