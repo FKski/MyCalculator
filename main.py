@@ -8,7 +8,7 @@ import keyboard
 root=Tk()
 root.title("MyCalc")
 root.iconbitmap("Calc.ico")
-root.configure(background="#383F45")
+root.configure(background="#383F45", padx=5, pady=5)
 
 
 resFl = BooleanVar()
@@ -106,21 +106,29 @@ def sum_button_press():
         btnClr.config(text="CE")
     except:
         entry_field.delete(0, END)
-        entry_field.insert(0, "Error")
+        entry_field.insert(0, "Error !")
     return
 
 def posneg_button_press():
     global entry_field
+    global full_operation
+    op = full_operation
     entry = entry_field.get()
     if len(entry) > 0:
         if entry[0] != "-":
             entry = "-" + entry
             entry_field.delete(0, END)
             entry_field.insert(0, entry)
+            if resFl == True:
+                op = "-" + op
+                full_operation = op
         elif entry[0] == "-":
             entry = entry.replace("-", "")
             entry_field.delete(0, END)
             entry_field.insert(0, entry)
+            if resFl == True:
+                op = op.replace("-","")
+                full_operation = op
     return
 
 def comma_button_press():
@@ -142,9 +150,61 @@ def comma_button_press():
         pass
     return
 
+def percent_button_press():
+    entry = entry_field.get()
+    entry = int(entry)/100
+    entry_field.delete(0, END)
+    entry_field.insert(0,entry)
+    return
+
+def secpow_button_press():
+    try:
+        entry = entry_field.get()
+        entry = int(entry)**2
+        entry_field.delete(0, END)
+        entry_field.insert(0,entry)
+    except:
+        entry_field.delete(0, END)
+        entry_field.insert(0, "Error !")
+    return
+
+def sqrt_button_press():
+    try:
+        entry = entry_field.get()
+        entry = int(entry)**(1/2)
+        entry_field.delete(0, END)
+        entry_field.insert(0,entry)
+    except:
+        entry_field.delete(0, END)
+        entry_field.insert(0, "Error !")
+    return
+    return
+
+def frac_button_press():
+    try:
+        entry = entry_field.get()
+        entry = 1 / int(entry)
+        entry_field.delete(0, END)
+        entry_field.insert(0,entry)
+    except:
+        entry_field.delete(0, END)
+        entry_field.insert(0, "Error !")
+    return
+
+def back_button_press():
+    try:
+        entry = entry_field.get()
+        entry = entry[:-1]
+        entry_field.delete(0, END)
+        entry_field.insert(0,entry)
+    except:
+        entry_field.delete(0, END)
+        entry_field.insert(0, "Error !")
+    return
+
 # Creating widgets
-entry_field = Entry(root, width=65, borderwidth=5)
-full_operation_label = Label(root, width=43, borderwidth=5, font=("Heveltica", 11, "bold"), bg="#454C52", fg="white", anchor=E)
+entry_field = Entry(root, width=85, borderwidth=5, bg="#3f454b", fg="white")
+full_operation_label = Label(root, width=56, borderwidth=5, font=("Heveltica", 11, "bold"), bg="#454C52", fg="white", anchor=E)
 
 btn1 = Button(root, text="1", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#52606D", fg="white", command=lambda: button_press(1))
 btn2 = Button(root, text="2", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#52606D", fg="white", command=lambda: button_press(2))
@@ -186,42 +246,52 @@ keyboard.on_press_key("*", lambda _: op_button_press("*"))
 keyboard.on_press_key("/", lambda _: op_button_press("/"))
 
 
-btnEq = Button(root, text="=", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: sum_button_press())
+btnEq = Button(root, text="=", width=22, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: sum_button_press())
 btnClr = Button(root, text="CE", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: clr_button_press())
 keyboard.on_press_key("ENTER", lambda _: sum_button_press())
 keyboard.on_press_key("ESC", lambda _: clr_button_press())
 
-btnPercent = Button(root, text="%", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: sum_button_press())
+btnPercent = Button(root, text="%", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: percent_button_press())
+btnSecPow = Button(root, text="(x)^2", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: secpow_button_press())
+btnSqrt = Button(root, text="√", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: sqrt_button_press())
+btnFrac = Button(root, text="1/x", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: frac_button_press())
+
+btnBack = Button(root, text="<--", width=10, height=4, border=2, font=("Heveltica", 11, "bold"), bg="#ffcb2e", command=lambda: back_button_press())
+keyboard.on_press_key("Backspace", lambda _: back_button_press())
 
 
 # Showing widgets
-full_operation_label.grid(row=0, column=0, columnspan=4, padx=10, pady=8) #Row 0
+full_operation_label.grid(row=0, column=0, columnspan=5, padx=10, pady=8) #Row 0
 
-entry_field.grid(row=1, column=0, columnspan=4, padx=10, pady=8) #Row 1
+entry_field.grid(row=1, column=0, columnspan=5, padx=10, pady=8) #Row 1
 
 btnClr.grid(row=2, column=0, padx=3, pady=3) #Row 2
 btnPosNeg.grid(row=2, column=1, padx=3, pady=3)
 btnPercent.grid(row=2, column=2, padx=3, pady=3)
-btnDiv.grid(row=2, column=3, padx=3, pady=3)  
+btnDiv.grid(row=2, column=3, padx=3, pady=3)
+btnBack.grid(row=2, column=4, padx=3, pady=3)
 
 btn7.grid(row=3, column=0, padx=3, pady=3) #Row 3
 btn8.grid(row=3, column=1, padx=3, pady=3) 
 btn9.grid(row=3, column=2, padx=3, pady=3)
-btnMult.grid(row=3, column=3, padx=3, pady=3)  
+btnMult.grid(row=3, column=3, padx=3, pady=3)
+btnFrac.grid(row=3, column=4, padx=3, pady=3)
 
 btn4.grid(row=4, column=0, padx=3, pady=3) #Row 4
 btn5.grid(row=4, column=1, padx=3, pady=3) 
 btn6.grid(row=4, column=2, padx=3, pady=3) 
-btnSub.grid(row=4, column=3, padx=3, pady=3) 
+btnSub.grid(row=4, column=3, padx=3, pady=3)
+btnSqrt.grid(row=4, column=4, padx=3, pady=3)
 
 btn1.grid(row=5, column=0, padx=3, pady=3) #Row 5
 btn2.grid(row=5, column=1, padx=3, pady=3) 
 btn3.grid(row=5, column=2, padx=3, pady=3)
 btnAdd.grid(row=5, column=3, padx=3, pady=3)
+btnSecPow.grid(row=5, column=4, padx=3, pady=3)
 
 btnComma.grid(row=6, column=0, padx=3, pady=3) #Row 6
 btn0.grid(row=6, column=1, padx=3, pady=3, columnspan=2) 
-btnEq.grid(row=6, column=3, padx=3, pady=3)
+btnEq.grid(row=6, column=3, padx=3, pady=3, columnspan=2)
 
 
 root.mainloop()
