@@ -18,7 +18,8 @@ clr_type = StringVar()
 clr_type = "C"
 sgnFl = BooleanVar()
 sgnFl = False
-op_list = ["+","-","/","*"]
+commaFl = BooleanVar()
+commaFl = False
 
 def change_btnClr_width():
     if btnClr["text"] == "CE":
@@ -113,6 +114,38 @@ def sum_button_press():
         entry_field.insert(0, "Error")
     return
 
+def posneg_button_press():
+    global entry_field
+    entry = entry_field.get()
+    if len(entry) > 0:
+        if entry[0] != "-":
+            entry = "-" + entry
+            entry_field.delete(0, END)
+            entry_field.insert(0, entry)
+        elif entry[0] == "-":
+            entry = entry.replace("-", "")
+            entry_field.delete(0, END)
+            entry_field.insert(0, entry)
+    return
+
+def comma_button_press():
+    global entry_field
+    entry = entry_field.get()
+    result = entry.find(".")
+    if result == -1:
+        commaResFl = False
+    else:
+        commaResFl = True
+    if commaResFl == False:
+        if len(entry) > 0:
+            entry += "."
+            entry_field.delete(0, END)
+            entry_field.insert(0, entry)
+        elif len(entry) == 0:
+            entry_field.insert(0, "0.")
+    else:
+        pass
+    return
 
 # Creating widgets
 entry_field = Entry(root, width=35, borderwidth=5)
@@ -140,11 +173,15 @@ keyboard.on_press_key("7", lambda _: button_press(7))
 keyboard.on_press_key("8", lambda _: button_press(8))
 keyboard.on_press_key("9", lambda _: button_press(9))
 
+btnPosNeg = Button(root, text="+/-", padx=34, pady=20, border=2, command=lambda: posneg_button_press())
 btn0 = Button(root, text="0", padx=40, pady=20, border=2, command=lambda: button_press(0))
-keyboard.on_press_key("9", lambda _: button_press(0))
+btnComma = Button(root, text=",", padx=42, pady=20, border=2, command=lambda: comma_button_press())
+keyboard.on_press_key("SPACEBAR", lambda _: posneg_button_press())
+keyboard.on_press_key("0", lambda _: button_press(0))
+keyboard.on_press_key(",", lambda _: comma_button_press())
 
 
-btnAdd = Button(root, text="+", padx=40, pady=20, border=2, command=lambda: op_button_press("+"))
+btnAdd = Button(root, text="+", padx=39, pady=20, border=2, command=lambda: op_button_press("+"))
 btnSub = Button(root, text="-", padx=40, pady=20, border=2, command=lambda: op_button_press("-"))
 btnMult = Button(root, text="*", padx=40, pady=20, border=2, command=lambda: op_button_press("*"))
 btnDiv = Button(root, text="/", padx=40, pady=20, border=2, command=lambda: op_button_press("/"))
@@ -155,37 +192,41 @@ keyboard.on_press_key("/", lambda _: op_button_press("/"))
 
 
 btnEq = Button(root, text="=", padx=40, pady=20, border=2, command=lambda: sum_button_press())
-keyboard.on_press_key("ENTER", lambda _: sum_button_press())
-
 btnClr = Button(root, text="CE", padx=37, pady=20, border=2, command=lambda: clr_button_press())
+keyboard.on_press_key("ENTER", lambda _: sum_button_press())
 keyboard.on_press_key("ESC", lambda _: clr_button_press())
-    
+
+
+
+
 # Showing widgets
-full_operation_label.grid(row=0, column=0, columnspan=3, padx=10, pady=5)
-entry_field.grid(row=1, column=0, columnspan=3, padx=10, pady=8)
+full_operation_label.grid(row=0, column=0, columnspan=3, padx=10, pady=5) #Row 0
 
-btn1.grid(row=4, column=0, padx=3, pady=3)
-btn2.grid(row=4, column=1, padx=3, pady=3)
-btn3.grid(row=4, column=2, padx=3, pady=3)
+entry_field.grid(row=1, column=0, columnspan=3, padx=10, pady=8) #Row 1
 
-btn4.grid(row=3, column=0, padx=3, pady=3)
-btn5.grid(row=3, column=1, padx=3, pady=3)
-btn6.grid(row=3, column=2, padx=3, pady=3)
+btn7.grid(row=2, column=0, padx=3, pady=3) #Row 2
+btn8.grid(row=2, column=1, padx=3, pady=3) 
+btn9.grid(row=2, column=2, padx=3, pady=3)  
 
-btn7.grid(row=2, column=0, padx=3, pady=3)
-btn8.grid(row=2, column=1, padx=3, pady=3)
-btn9.grid(row=2, column=2, padx=3, pady=3)
+btn4.grid(row=3, column=0, padx=3, pady=3) #Row 3
+btn5.grid(row=3, column=1, padx=3, pady=3) 
+btn6.grid(row=3, column=2, padx=3, pady=3) 
 
-btn0.grid(row=5, column=0, padx=3, pady=3, columnspan=3)
+btn1.grid(row=4, column=0, padx=3, pady=3) #Row 4
+btn2.grid(row=4, column=1, padx=3, pady=3) 
+btn3.grid(row=4, column=2, padx=3, pady=3) 
 
-btnAdd.grid(row=6, column=0, padx=3, pady=3)
-btnSub.grid(row=6, column=1, padx=3, pady=3)
+btnPosNeg.grid(row=5, column=0, padx=3, pady=3) #Row 5
+btn0.grid(row=5, column=1, padx=3, pady=3) 
+btnComma.grid(row=5, column=2, padx=3, pady=3) 
 
-btnMult.grid(row=7, column=0, padx=3, pady=3)
-btnDiv.grid(row=7, column=1, padx=3, pady=3)
+btnAdd.grid(row=6, column=0, padx=3, pady=5) #Row 6
+btnSub.grid(row=6, column=1, padx=3, pady=5) 
+btnEq.grid(row=6, column=2, padx=3, pady=5) 
 
-btnEq.grid(row=6, column=2, padx=3, pady=3)
-btnClr.grid(row=7, column=2, padx=3, pady=3)
+btnMult.grid(row=7, column=0, padx=3, pady=3) #Row 7
+btnDiv.grid(row=7, column=1, padx=3, pady=3)  
+btnClr.grid(row=7, column=2, padx=3, pady=3) 
 
 
 root.mainloop()
