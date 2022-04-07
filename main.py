@@ -1,15 +1,13 @@
 from threading import currentThread
 from tkinter import *
-from numpy import full
+from numpy import full, sign, test
 import time
+import keyboard
 
 root=Tk()
 root.title("MyCalc")
 root.iconbitmap("Calc.ico")
 root.configure(background="grey")
-
-
-entry_field = Entry(root, width=35, borderwidth=5 )
 
 
 resFl = BooleanVar()
@@ -20,6 +18,7 @@ clr_type = StringVar()
 clr_type = "C"
 sgnFl = BooleanVar()
 sgnFl = False
+op_list = ["+","-","/","*"]
 
 def change_btnClr_width():
     if btnClr["text"] == "CE":
@@ -56,7 +55,6 @@ def op_button_press(sgn):
     global current_num
     global resFl
     global sgnFl
-
     if resFl == True:
         entry_field.delete(0, END)
         resFl = False
@@ -73,7 +71,6 @@ def op_button_press(sgn):
         full_operation += sgn
         entry_field.delete(0, END)
         full_operation_label.config(text=full_operation)
-
 
 def clr_button_press():
     global resFl
@@ -96,50 +93,72 @@ def sum_button_press():
     global current_num
     global resFl
     global clr_type
-
-    if resFl == True:
+    try:
+        if resFl == True:
+            entry_field.delete(0, END)
+            entry_field.insert(0, str(full_operation))
+        else:
+            resFl = True
+            current_num = entry_field.get()
+            full_operation += current_num
+            full_operation_label.config(text=full_operation + "=" + str(eval(full_operation)))
+            full_operation = str(eval(full_operation))
+            entry_field.delete(0, END)
+            entry_field.insert(0, str(full_operation))
+        clr_type="CE"
+        btnClr.config(text="CE")
+        change_btnClr_width()
+    except:
         entry_field.delete(0, END)
-        entry_field.insert(0, str(full_operation))
-    else:
-        resFl = True
-        current_num = entry_field.get()
-        full_operation += current_num
-        full_operation_label.config(text=full_operation + "=" + str(eval(full_operation)))
-        full_operation = str(eval(full_operation))
-        entry_field.delete(0, END)
-        entry_field.insert(0, str(full_operation))
-    clr_type="CE"
-    btnClr.config(text="CE")
-    change_btnClr_width()
+        entry_field.insert(0, "Error")
     return
 
 
-
 # Creating widgets
+entry_field = Entry(root, width=35, borderwidth=5)
 full_operation_label = Label(root, width=35, borderwidth=5, bg="#ABABAB", fg="#4D4D4D", anchor=E)
 
 btn1 = Button(root, text="1", padx=40, pady=20, border=2, command=lambda: button_press(1))
 btn2 = Button(root, text="2", padx=40, pady=20, border=2, command=lambda: button_press(2))
 btn3 = Button(root, text="3", padx=40, pady=20, border=2, command=lambda: button_press(3))
+keyboard.on_press_key("1", lambda _: button_press(1))
+keyboard.on_press_key("2", lambda _: button_press(2))
+keyboard.on_press_key("3", lambda _: button_press(3))
+
 
 btn4 = Button(root, text="4", padx=40, pady=20, border=2, command=lambda: button_press(4))
 btn5 = Button(root, text="5", padx=40, pady=20, border=2, command=lambda: button_press(5))
 btn6 = Button(root, text="6", padx=40, pady=20, border=2, command=lambda: button_press(6))
+keyboard.on_press_key("4", lambda _: button_press(4))
+keyboard.on_press_key("5", lambda _: button_press(5))
+keyboard.on_press_key("6", lambda _: button_press(6))
 
 btn7 = Button(root, text="7", padx=40, pady=20, border=2, command=lambda: button_press(7))
 btn8 = Button(root, text="8", padx=40, pady=20, border=2, command=lambda: button_press(8))
 btn9 = Button(root, text="9", padx=40, pady=20, border=2, command=lambda: button_press(9))
+keyboard.on_press_key("7", lambda _: button_press(7))
+keyboard.on_press_key("8", lambda _: button_press(8))
+keyboard.on_press_key("9", lambda _: button_press(9))
 
 btn0 = Button(root, text="0", padx=40, pady=20, border=2, command=lambda: button_press(0))
+keyboard.on_press_key("9", lambda _: button_press(0))
+
 
 btnAdd = Button(root, text="+", padx=40, pady=20, border=2, command=lambda: op_button_press("+"))
 btnSub = Button(root, text="-", padx=40, pady=20, border=2, command=lambda: op_button_press("-"))
-btnDiv = Button(root, text="*", padx=40, pady=20, border=2, command=lambda: op_button_press("*"))
-btnMult = Button(root, text="/", padx=40, pady=20, border=2, command=lambda: op_button_press("/"))
+btnMult = Button(root, text="*", padx=40, pady=20, border=2, command=lambda: op_button_press("*"))
+btnDiv = Button(root, text="/", padx=40, pady=20, border=2, command=lambda: op_button_press("/"))
+keyboard.on_press_key("+", lambda _: op_button_press("+"))
+keyboard.on_press_key("-", lambda _: op_button_press("-"))
+keyboard.on_press_key("*", lambda _: op_button_press("*"))
+keyboard.on_press_key("/", lambda _: op_button_press("/"))
+
 
 btnEq = Button(root, text="=", padx=40, pady=20, border=2, command=lambda: sum_button_press())
+keyboard.on_press_key("ENTER", lambda _: sum_button_press())
 
 btnClr = Button(root, text="CE", padx=37, pady=20, border=2, command=lambda: clr_button_press())
+keyboard.on_press_key("ESC", lambda _: clr_button_press())
     
 # Showing widgets
 full_operation_label.grid(row=0, column=0, columnspan=3, padx=10, pady=5)
@@ -167,5 +186,6 @@ btnDiv.grid(row=7, column=1, padx=3, pady=3)
 
 btnEq.grid(row=6, column=2, padx=3, pady=3)
 btnClr.grid(row=7, column=2, padx=3, pady=3)
+
 
 root.mainloop()
